@@ -146,6 +146,12 @@
     letter-spacing: 0.03em;
   }
   svg#mesh rect{ transition: fill 0.6s ease; }
+  .mesh-box img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
   /* ---------- SECTIONS ---------- */
   section{ padding: 56px 0; border-top: 1px solid var(--line); }
@@ -366,10 +372,10 @@
         <span class="tag">C++ Scientific Computing</span>
       </div>
     </div>
-    <div class="mesh-box">
-      <svg id="mesh" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated adaptive mesh refinement diagram, refining near a simulated ablation front"></svg>
-      <div class="mesh-caption">fig. 1 — adaptive quadtree refinement near an ablation front</div>
-    </div>
+  <div class="mesh-box">
+    <img src="portrait.png" alt="James Corbett">
+    <div class="mesh-caption">fig. 1 Simulation example.</div>
+  </div>
   </div>
 </header>
 
@@ -514,76 +520,7 @@
   </div>
 </footer>
 
-<script>
-  // Build an adaptive quadtree mesh (echoing p4est-style refinement),
-  // subdividing more finely toward a simulated "ablation front".
-  (function(){
-    const svg = document.getElementById('mesh');
-    const NS = "http://www.w3.org/2000/svg";
-    const SIZE = 200;
-    const focus = { x: 130, y: 70 }; // hot point, off-center like an ablation front
-    const cool = [46, 111, 149];   // --cool
-    const hot  = [255, 90, 54];    // --hot
 
-    function lerp(a,b,t){ return a + (b-a)*t; }
-    function colorFor(t){
-      const r = Math.round(lerp(cool[0], hot[0], t));
-      const g = Math.round(lerp(cool[1], hot[1], t));
-      const b = Math.round(lerp(cool[2], hot[2], t));
-      return `rgb(${r},${g},${b})`;
-    }
-
-    const rects = [];
-
-    function subdivide(x, y, s, depth){
-      const cx = x + s/2, cy = y + s/2;
-      const dist = Math.hypot(cx - focus.x, cy - focus.y);
-      const proximity = Math.max(0, 1 - dist / 120);
-      const shouldSplit = depth < 5 && proximity > (0.15 + depth * 0.12) && s > 6;
-
-      if (shouldSplit){
-        const h = s/2;
-        subdivide(x, y, h, depth+1);
-        subdivide(x+h, y, h, depth+1);
-        subdivide(x, y+h, h, depth+1);
-        subdivide(x+h, y+h, h, depth+1);
-      } else {
-        rects.push({x, y, s, depth, proximity});
-      }
-    }
-
-    subdivide(0, 0, SIZE, 0);
-
-    rects.forEach(r => {
-      const rect = document.createElementNS(NS, 'rect');
-      rect.setAttribute('x', r.x + 0.4);
-      rect.setAttribute('y', r.y + 0.4);
-      rect.setAttribute('width', r.s - 0.8);
-      rect.setAttribute('height', r.s - 0.8);
-      rect.setAttribute('fill', '#ffffff');
-      rect.setAttribute('stroke', '#ccd6de');
-      rect.setAttribute('stroke-width', '0.6');
-      svg.appendChild(rect);
-    });
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function ignite(){
-      rects.forEach((r, i) => {
-        const el = svg.children[i];
-        const delay = reduceMotion ? 0 : r.proximity * 400 + Math.random() * 250;
-        setTimeout(() => {
-          el.setAttribute('fill', r.proximity > 0.05 ? colorFor(Math.min(1, r.proximity * 1.3)) : '#ffffff');
-        }, delay);
-      });
-    }
-
-    ignite();
-    if (!reduceMotion){
-      setInterval(ignite, 4200);
-    }
-  })();
-</script>
 
 </body>
 </html>
