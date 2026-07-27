@@ -1,10 +1,591 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>James Corbett</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>James Corbett — Computational Physics</title>
+<meta name="description" content="James Corbett — PhD Candidate, Applied Mathematics & Statistics, Stony Brook University. Numerical simulation of fusion pellet fueling and disruption mitigation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #eef2f4;
+    --paper: #ffffff;
+    --ink: #12182b;
+    --ink-soft: #4b5568;
+    --line: #ccd6de;
+    --line-soft: #dde5ea;
+    --hot: #ff5a36;
+    --hot-soft: #ffe4da;
+    --cool: #2e6f95;
+    --cool-soft: #dcebf2;
+    --radius: 3px;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .wrap{ max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  a{ color: inherit; }
+
+  .eyebrow{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .eyebrow::before{
+    content: "";
+    width: 7px; height: 7px;
+    background: var(--hot);
+    display: inline-block;
+    border-radius: 1px;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(238,242,244,0.88);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap{
+    display: flex; justify-content: space-between; align-items: center;
+    height: 56px;
+  }
+  nav .brand{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  nav ul{
+    list-style: none;
+    display: flex; gap: 28px;
+  }
+  nav a{
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    transition: color 0.15s ease;
+  }
+  nav a:hover, nav a:focus-visible{ color: var(--hot); }
+  .nav-toggle{ display: none; }
+
+  /* ---------- HERO ---------- */
+  header.hero{ padding: 72px 0 40px; }
+  .hero-grid{
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+  }
+  h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(38px, 5.5vw, 60px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+  }
+  .hero-sub{
+    margin-top: 18px;
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+  .hero-tags{
+    margin-top: 26px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .tag{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--ink-soft);
+    background: var(--paper);
+  }
+  .mesh-box{
+    aspect-ratio: 1/1;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+  }
+  .mesh-caption{
+    position: absolute; bottom: 0; left: 0; right: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    padding: 8px 10px;
+    background: linear-gradient(to top, rgba(255,255,255,0.92), rgba(255,255,255,0));
+    letter-spacing: 0.03em;
+  }
+  svg#mesh rect{ transition: fill 0.6s ease; }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: 56px 0; border-top: 1px solid var(--line); }
+  section h2{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    margin-bottom: 22px;
+  }
+  .lede{
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+  }
+  .lede + .lede{ margin-top: 12px; }
+
+  .card-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    border-top: 3px solid var(--cool);
+  }
+  .card:nth-child(2){ border-top-color: var(--hot); }
+  .card:nth-child(3){ border-top-color: var(--ink); }
+  .card h3{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+  .card p{ font-size: 13.5px; color: var(--ink-soft); }
+
+  .project{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px;
+    margin-top: 18px;
+  }
+  .project-head{
+    display: flex; justify-content: space-between; align-items: baseline;
+    flex-wrap: wrap; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .project h3{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .project-role{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--hot);
+    letter-spacing: 0.04em;
+  }
+  .project p{ color: var(--ink-soft); font-size: 14.5px; }
+  .project ul{
+    margin-top: 12px;
+    padding-left: 18px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .project ul li{ margin-bottom: 5px; }
+  .stack{
+    margin-top: 14px;
+    display: flex; flex-wrap: wrap; gap: 7px;
+  }
+  .stack span{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    padding: 3px 8px;
+    background: var(--cool-soft);
+    color: var(--cool);
+    border-radius: var(--radius);
+  }
+  .project:nth-of-type(2) .stack span{ background: var(--hot-soft); color: var(--hot); }
+
+  .skills-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+  }
+  .skills-col h4{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 6px;
+  }
+  .skills-col ul{ list-style: none; }
+  .skills-col li{
+    font-size: 14px;
+    padding: 5px 0;
+    position: relative;
+    padding-left: 14px;
+  }
+  .skills-col li::before{
+    content: "";
+    position: absolute; left: 0; top: 12px;
+    width: 5px; height: 5px;
+    background: var(--line);
+  }
+
+  .cv-line{
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 18px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .cv-line:last-of-type{ border-bottom: none; }
+  .cv-date{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .cv-body h4{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 16.5px;
+  }
+  .cv-body p{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin-top: 3px;
+  }
+  .cv-download{
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 26px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .cv-download:hover{ background: var(--ink); color: var(--bg); }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 40px 0 60px;
+  }
+  .contact-row{
+    display: flex; flex-wrap: wrap; gap: 28px;
+    margin-bottom: 24px;
+  }
+  .contact-row a{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .contact-row a:hover{ color: var(--hot); border-color: var(--hot); }
+  footer .fine{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 760px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .mesh-box{ max-width: 340px; margin: 0 auto; }
+    .card-grid{ grid-template-columns: 1fr; }
+    .skills-grid{ grid-template-columns: 1fr 1fr; }
+    nav ul{ gap: 16px; }
+    .cv-line{ grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    svg#mesh rect{ transition: none; }
+  }
+</style>
 </head>
 <body>
-    <h1>Welcome!</h1>
-    <p>This is my GitHub Pages website.</p>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">J. CORBETT</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#cv">CV</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">PhD Candidate — Applied Mathematics &amp; Statistics</p>
+      <h1>James Corbett</h1>
+      <p class="hero-sub">Computational physicist working on numerical simulation of pellet fueling and disruption mitigation in nuclear fusion reactors, on ITER-funded work at Stony Brook University.</p>
+      <div class="hero-tags">
+        <span class="tag">Adaptive Mesh Refinement</span>
+        <span class="tag">MPI / HPC</span>
+        <span class="tag">Low-Rm MHD</span>
+        <span class="tag">C++ Scientific Computing</span>
+      </div>
+    </div>
+    <div class="mesh-box">
+      <svg id="mesh" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated adaptive mesh refinement diagram, refining near a simulated ablation front"></svg>
+      <div class="mesh-caption">fig. 1 — adaptive quadtree refinement near an ablation front</div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <p class="eyebrow">About</p>
+    <h2>Field notes</h2>
+    <p class="lede">I'm a PhD candidate in Applied Mathematics &amp; Statistics at Stony Brook University, advised by Roman Samulyak. My work centers on the numerical simulation of pellet fueling and disruption mitigation systems for tokamak fusion reactors — problems that sit at the intersection of magnetohydrodynamics, kinetic particle transport, and large-scale parallel computing.</p>
+    <p class="lede">Day to day, that means building and extending C++ simulation codes on adaptive, distributed-memory meshes: tracking how solid pellets ablate into cold, dense plasma clouds, and how that plasma redistributes itself across thousands of MPI ranks in real time. I also bring a computational background from outside plasma physics, having previously worked on a Python/ML internship at Zencastr.</p>
+  </div>
+</section>
+
+<section id="research">
+  <div class="wrap">
+    <p class="eyebrow">Research Focus</p>
+    <h2>Where the problems live</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Pellet Fueling &amp; Disruption Mitigation</h3>
+        <p>Simulating how injected pellets ablate and redistribute mass and impurities in tokamak plasmas — core physics behind ITER's fueling and disruption-mitigation strategy.</p>
+      </div>
+      <div class="card">
+        <h3>Low-Rm Magnetohydrodynamics</h3>
+        <p>Numerical methods for low magnetic Reynolds number MHD, modeling the coupled fluid and electromagnetic behavior of partially ionized ablation clouds.</p>
+      </div>
+      <div class="card">
+        <h3>HPC &amp; Adaptive Mesh Refinement</h3>
+        <p>Parallel PDE solvers on p4est-based adaptive meshes, built for distributed-memory clusters using MPI — the computational backbone that makes the physics tractable at scale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <p class="eyebrow">Selected Work</p>
+    <h2>Projects</h2>
+
+    <div class="project">
+      <div class="project-head">
+        <h3>PelletSolver</h3>
+        <span class="project-role">Simulation Codebase</span>
+      </div>
+      <p>A parallel simulation codebase built on p4est adaptive mesh refinement and MPI, developed as part of ITER-funded pellet fueling research.</p>
+      <ul>
+        <li>Particle redistribution pipeline spanning quadtree traversal, packing, and sparse all-to-all communication across MPI ranks</li>
+        <li>Space-filling-curve based mesh partitioning using Morton/Z-curve ordering for load balance across processors</li>
+        <li>Mesh rebuilt from scratch every timestep, requiring an efficient search–pack–communicate cycle each cycle</li>
+        <li>Gradient reconstruction on unbalanced adaptive trees using neighbor-quadrant data</li>
+      </ul>
+      <div class="stack">
+        <span>C++</span><span>MPI</span><span>p4est</span><span>AMR</span>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="project-head">
+        <h3>plasmoid1d</h3>
+        <span class="project-role">Simulation Codebase</span>
+      </div>
+      <p>A C++ codebase modeling 1D plasma dynamics, tracking charge-state evolution and radiative cooling for pellet ablation clouds.</p>
+      <ul>
+        <li>Charge-state evolution for neon using OpenADAS atomic rate coefficients (PLT/PRB, radiative cooling functions)</li>
+        <li>Polymorphic equation-of-state hierarchy spanning Saha-neon, polytropic, and stiffened-gas models</li>
+        <li>Heun's method time integration, with comparative analysis of implicit schemes (Crank–Nicolson, implicit midpoint) for stiff, oscillatory plasma systems</li>
+      </ul>
+      <div class="stack">
+        <span>C++</span><span>GSL</span><span>ADAS</span><span>ODE Solvers</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="toolkit">
+  <div class="wrap">
+    <p class="eyebrow">Toolkit</p>
+    <h2>Technical skills</h2>
+    <div class="skills-grid">
+      <div class="skills-col">
+        <h4>Languages &amp; Tools</h4>
+        <ul>
+          <li>C++</li>
+          <li>Python</li>
+          <li>Git</li>
+          <li>Unix / HPC clusters</li>
+        </ul>
+      </div>
+      <div class="skills-col">
+        <h4>Numerical Methods</h4>
+        <ul>
+          <li>Numerical PDEs</li>
+          <li>Adaptive mesh refinement</li>
+          <li>Implicit / explicit ODE integrators</li>
+          <li>Low-Rm MHD</li>
+        </ul>
+      </div>
+      <div class="skills-col">
+        <h4>Computing</h4>
+        <ul>
+          <li>MPI / distributed-memory parallelism</li>
+          <li>Scientific software design</li>
+          <li>Large-scale simulation codebases</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cv">
+  <div class="wrap">
+    <p class="eyebrow">Curriculum Vitae</p>
+    <h2>Education &amp; experience</h2>
+
+    <div class="cv-line">
+      <div class="cv-date">2026 (exp.)</div>
+      <div class="cv-body">
+        <h4>PhD, Applied Mathematics &amp; Statistics</h4>
+        <p>Stony Brook University — advised by Roman Samulyak. Research on numerical simulation of pellet fueling and disruption mitigation for fusion reactors, ITER-funded.</p>
+      </div>
+    </div>
+
+    <div class="cv-line">
+      <div class="cv-date">Internship</div>
+      <div class="cv-body">
+        <h4>Zencastr</h4>
+        <p>Python / machine learning internship.</p>
+      </div>
+    </div>
+
+    <a class="cv-download" href="resume.pdf" download>↓ Download full CV (PDF)</a>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <p class="eyebrow">Contact</p>
+    <h2>Get in touch</h2>
+    <div class="contact-row" style="margin-top: 20px;">
+      <a href="mailto:your.email@example.com">your.email@example.com</a>
+      <a href="https://github.com/yourusername" target="_blank" rel="noopener">github.com/yourusername</a>
+      <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener">linkedin.com/in/yourusername</a>
+    </div>
+    <p class="fine">© 2026 James Corbett · Stony Brook University</p>
+  </div>
+</footer>
+
+<script>
+  // Build an adaptive quadtree mesh (echoing p4est-style refinement),
+  // subdividing more finely toward a simulated "ablation front".
+  (function(){
+    const svg = document.getElementById('mesh');
+    const NS = "http://www.w3.org/2000/svg";
+    const SIZE = 200;
+    const focus = { x: 130, y: 70 }; // hot point, off-center like an ablation front
+    const cool = [46, 111, 149];   // --cool
+    const hot  = [255, 90, 54];    // --hot
+
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    function colorFor(t){
+      const r = Math.round(lerp(cool[0], hot[0], t));
+      const g = Math.round(lerp(cool[1], hot[1], t));
+      const b = Math.round(lerp(cool[2], hot[2], t));
+      return `rgb(${r},${g},${b})`;
+    }
+
+    const rects = [];
+
+    function subdivide(x, y, s, depth){
+      const cx = x + s/2, cy = y + s/2;
+      const dist = Math.hypot(cx - focus.x, cy - focus.y);
+      const proximity = Math.max(0, 1 - dist / 120);
+      const shouldSplit = depth < 5 && proximity > (0.15 + depth * 0.12) && s > 6;
+
+      if (shouldSplit){
+        const h = s/2;
+        subdivide(x, y, h, depth+1);
+        subdivide(x+h, y, h, depth+1);
+        subdivide(x, y+h, h, depth+1);
+        subdivide(x+h, y+h, h, depth+1);
+      } else {
+        rects.push({x, y, s, depth, proximity});
+      }
+    }
+
+    subdivide(0, 0, SIZE, 0);
+
+    rects.forEach(r => {
+      const rect = document.createElementNS(NS, 'rect');
+      rect.setAttribute('x', r.x + 0.4);
+      rect.setAttribute('y', r.y + 0.4);
+      rect.setAttribute('width', r.s - 0.8);
+      rect.setAttribute('height', r.s - 0.8);
+      rect.setAttribute('fill', '#ffffff');
+      rect.setAttribute('stroke', '#ccd6de');
+      rect.setAttribute('stroke-width', '0.6');
+      svg.appendChild(rect);
+    });
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function ignite(){
+      rects.forEach((r, i) => {
+        const el = svg.children[i];
+        const delay = reduceMotion ? 0 : r.proximity * 400 + Math.random() * 250;
+        setTimeout(() => {
+          el.setAttribute('fill', r.proximity > 0.05 ? colorFor(Math.min(1, r.proximity * 1.3)) : '#ffffff');
+        }, delay);
+      });
+    }
+
+    ignite();
+    if (!reduceMotion){
+      setInterval(ignite, 4200);
+    }
+  })();
+</script>
+
 </body>
 </html>
