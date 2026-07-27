@@ -344,7 +344,7 @@
   <div class="wrap">
     <div class="brand">J. CORBETT</div>
     <ul>
-      <li><a href="#about">About</a></li>
+      <li><a href="#about">About Me</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#cv">CV</a></li>
@@ -358,7 +358,7 @@
     <div>
       <p class="eyebrow">PhD Candidate — Applied Mathematics &amp; Statistics</p>
       <h1>James Corbett</h1>
-      <p class="hero-sub">Computational physicist working on numerical simulation of pellet fueling and disruption mitigation in nuclear fusion reactors, on ITER-funded work at Stony Brook University.</p>
+      <p class="hero-sub">Computational scientist working on numerical simulation of pellet fueling and disruption mitigation in nuclear fusion reactors.</p>
       <div class="hero-tags">
         <span class="tag">Adaptive Mesh Refinement</span>
         <span class="tag">MPI / HPC</span>
@@ -375,29 +375,27 @@
 
 <section id="about">
   <div class="wrap">
-    <p class="eyebrow">About</p>
-    <h2>Field notes</h2>
-    <p class="lede">I'm a PhD candidate in Applied Mathematics &amp; Statistics at Stony Brook University, advised by Roman Samulyak. My work centers on the numerical simulation of pellet fueling and disruption mitigation systems for tokamak fusion reactors — problems that sit at the intersection of magnetohydrodynamics, kinetic particle transport, and large-scale parallel computing.</p>
-    <p class="lede">Day to day, that means building and extending C++ simulation codes on adaptive, distributed-memory meshes: tracking how solid pellets ablate into cold, dense plasma clouds, and how that plasma redistributes itself across thousands of MPI ranks in real time. I also bring a computational background from outside plasma physics, having previously worked on a Python/ML internship at Zencastr.</p>
+    <p class="eyebrow">About Me</p>
+    <p class="lede">I'm a PhD candidate in Applied Mathematics &amp; Statistics at Stony Brook University, advised by Roman Samulyak. My work centers on the numerical simulation of processes related to fueling and disruption mitigation in nuclear fusion reactors such as tokamaks and stellarators. </p>
+    <p class="lede">In practice, I am often building and extending software in C++ designed to solve PDE &amp; ODE systems. I have held roles in other domains in the past, including an internship at Zencastr where I developed in python supporting the machine learning team, and at KPMG and Tapestry where I worked in Transfer Pricing.</p>
   </div>
 </section>
 
 <section id="research">
   <div class="wrap">
     <p class="eyebrow">Research Focus</p>
-    <h2>Where the problems live</h2>
     <div class="card-grid">
       <div class="card">
-        <h3>Pellet Fueling &amp; Disruption Mitigation</h3>
-        <p>Simulating how injected pellets ablate and redistribute mass and impurities in tokamak plasmas — core physics behind ITER's fueling and disruption-mitigation strategy.</p>
+        <h3>Pellet Fueling - Low-Rm Magnetohydrodynamics</h3>
+        <p>3D simulation of pellet ablation clouds sheds light on quantities of interest incluidng the ablation rate and rocket acceleration which affect how injected pellets distribute mass and impurities in fusion plasmas. Model ablation cloud flow in the low magnetic Reynold's number approximation. </p>
       </div>
       <div class="card">
-        <h3>Low-Rm Magnetohydrodynamics</h3>
-        <p>Numerical methods for low magnetic Reynolds number MHD, modeling the coupled fluid and electromagnetic behavior of partially ionized ablation clouds.</p>
+        <h3>Rocket Acceleration &amp; Disruption Mitigation</h3>
+        <p>Developed software to model plasma reponse to ablating fragments in order to estimate impact of rocket acceleration on ablated matrial deposition.</p>
       </div>
       <div class="card">
-        <h3>HPC &amp; Adaptive Mesh Refinement</h3>
-        <p>Parallel PDE solvers on p4est-based adaptive meshes, built for distributed-memory clusters using MPI — the computational backbone that makes the physics tractable at scale.</p>
+        <h3>Striation Instability</h3>
+        <p>Working towards demonstrating the striation instability in 3D simulations of pellet ablation clouds.</p>
       </div>
     </div>
   </div>
