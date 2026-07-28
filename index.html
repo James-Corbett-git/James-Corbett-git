@@ -414,47 +414,48 @@
   </div>
 </section>
 
-  <!--
-<section id="projects">
+
+<section id="Software Development">
   <div class="wrap">
-    <p class="eyebrow">Selected Projects</p>
+    
     
 
     <div class="project">
       <div class="project-head">
-        <h3>PelletSolver</h3>
+        <h3>PELOTON Contributor</h3>
         <span class="project-role">Simulation Codebase</span>
       </div>
-      <p>A parallel simulation codebase built on p4est adaptive mesh refinement and MPI, developed as part of ITER-funded pellet fueling research.</p>
+      <p>PELOTON is a parallelized C++ software designed to simulate gas-plasma flow governed by magnetohydrodynamic equations in the low magentic Reynold's number approximation. </p>
       <ul>
-        <li>Particle redistribution pipeline spanning quadtree traversal, packing, and sparse all-to-all communication across MPI ranks</li>
-        <li>Space-filling-curve based mesh partitioning using Morton/Z-curve ordering for load balance across processors</li>
-        <li>Mesh rebuilt from scratch every timestep, requiring an efficient search–pack–communicate cycle each cycle</li>
-        <li>Gradient reconstruction on unbalanced adaptive trees using neighbor-quadrant data</li>
+        <li>I leveraged Stony Brook's SeaWulf cluster to produce simulations across a large paramater ranges to tabulate quantities of interest such as the ablation rate and rocket acceleration.</li>
+        <li>Participated in code improvement, expansion, and testing effots.</li>
+        <li>Member of ongoing development of one-dimensional plasmoid expansion solver.</li>
+        <li>Expanding modelling capabilities to explore striation instability phenomenon.</li>
+        
       </ul>
       <div class="stack">
-        <span>C++</span><span>MPI</span><span>p4est</span><span>AMR</span>
+        <span>C++</span><span>MPI</span><span>p4est</span><span>Hydro Solvers</span><span>Hydro Solvers</span>
       </div>
     </div>
 
     <div class="project">
       <div class="project-head">
-        <h3>plasmoid1d</h3>
+        <h3>PELOTON Cooling Code</h3>
         <span class="project-role">Simulation Codebase</span>
       </div>
-      <p>A C++ codebase modeling 1D plasma dynamics, tracking charge-state evolution and radiative cooling for pellet ablation clouds.</p>
+      <p>Developed C++ software to simulate plasma dynamics during fueling &amp; shatter pellet injection, a technique used for disruption mitigation.</p>
       <ul>
-        <li>Charge-state evolution for neon using OpenADAS atomic rate coefficients (PLT/PRB, radiative cooling functions)</li>
-        <li>Polymorphic equation-of-state hierarchy spanning Saha-neon, polytropic, and stiffened-gas models</li>
-        <li>Heun's method time integration, with comparative analysis of implicit schemes (Crank–Nicolson, implicit midpoint) for stiff, oscillatory plasma systems</li>
+        <li>Applied software to validate PELOTON rocket acceleration results by comparison with experiment in JET.</li>
+        <li>Model supports dilution cooling, ohmic heating of electrons, ion-electron energy exchange, radiation energy loss, and charge state evolution.</li>
+        <li>Gained experience with multi-scale modelling and simulation, scientific software design, and C++ programming.</li>
       </ul>
       <div class="stack">
-        <span>C++</span><span>GSL</span><span>ADAS</span><span>ODE Solvers</span>
+        <span>C++</span><span>GSL</span><span>OPEN-ADAS</span><span>ODE Solvers</span>
       </div>
     </div>
   </div>
 </section>
-  -->
+  
 
 <section id="Technical Skills">
   <div class="wrap">
